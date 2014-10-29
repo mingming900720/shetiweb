@@ -35,28 +35,87 @@
 		private function setOption($key,$val){
 			$this->$key=$val;
 		}
+		
+		private function getError(){
+			$str="上传文件<font color='red'>{$this->originName}</font>时出错：";
+
+			switch($this->errorNum){
+				case 4: $str .= "没有文件被上传"; break;
+				case 3: $str .= "文件只被部分上传"; break;
+				case 2: $str .= "上传文件超过了HTML表单中MAX_FILE_SIZE选项指定的值"; break;
+				case 1: $str .= "上传文件超过了php.ini 中upload_max_filesize选项的值"; break;
+				case -1: $str .= "末充许的类型"; break;
+				case -2: $str .= "文件过大，上传文件不能超过{$this->maxsize}个字节"; break;
+				case -3: $str .= "上传失败"; break;
+				case -4: $str .= "建立存放上传文件目录失败，请重新指定上传目录"; break;
+				case -5: $str .= "必须指定上传文件的路径"; break;
+
+				default: $str .=  "末知错误";
+			}
+
+			return $str.'<br>';
+		}
+		
 		//用来检查文件上传路径
 		private function checkFilePath(){
-		
+			if(empty($this->filepath)) {
+				$this->setOption('errorNum', -5);
+				return false;
+			}
+
+			if(!file_exists($this->filepath) || !is_writable($this->filepath)){
+				if(!@mkdir($this->filepath, 0755)){
+					$this->setOption('errorNum', -4);
+					return false;
+				}
+			}
+			return true;
 		}
 		
 		//用来检查文件上传的大小
 		private function checkFileSize(){
+			if($this->fileSize > $this->maxsize){
+				$this->setOption('errorNum', -2);
+				return false;
+			}else{
+				return true;
+			}
+		}
 		
+		
+		//设置上传后的文件名称
+		private function setNewFlieName(){
+			if($this->israndname){
+				$this->setOption('newFileName',$this->proRandName());
+			}else{
+				$this->setOption('newFileName',$this->originName());
+			}
 		}
 		
 		//设置随机文件名称
 		private function proRandName(){
-		
+			$fileName=date("YmdHis").rand(100,999);
+			return $fileName.'.'.$this->fileType;
 		}
 		
 		//用于检查文件上传类型
 		private function checkFileType(){
-		
+			if(in_array(strtolower($this->fileType),$this->allowtype)){
+				return true;
+			}else{
+				$this->setOption('errorNum', -1);
+				return false;
+			}
 		}
 		
 		//用来上传一个文件 
 		function uploadFile($fileField){
+			$return=true;
+			//检查文件上传路径是否正确
+			if(!$this->checkFilePath()){
+				$this->errorMess=$this->getError();
+				return false;
+			}
 		
 			$name=$_FILES[$fileField]['name'];
 			$tmp_name=$_FILES[$fileField]['tmp_name'];
@@ -65,7 +124,40 @@
 			
 			
 			
-				$this->setFiles($name, $tmp_name, $size, $error);
+				if($this->setFiles($name, $tmp_name, $size, $error)){
+					if($this->checkFileSize() && $this->checkFileType()){
+						$this->setNewFlieName();
+						
+						if($this->copyFile()){
+							return true;
+						}else{
+							return false;
+						}						
+					}else{
+						$return=false;
+					}
+				}else{
+					$return=false;
+				}
+				if(!$return)
+					 $this->errorMess=$this->getError();
+				return $return;
+		}
+		
+		private function copyFile(){
+			if(!$this->errorNum){
+				$filepath=rtrim($this->filepath,'/').'/';
+				$filepath.=$this->newFileName;
+				
+				if(@move_uploaded_file($this->tmpFileName, $filepath)){
+					return true;
+				}else{
+					$this->setOption('errorNum', -3);
+					return false;
+				}
+			}else{ 
+				return false;
+			}
 		}
 		
 		//设置和$_FILES有关的内容
@@ -78,8 +170,8 @@
 			
 			$this->setOption('originName',$name);
 			$this->setOption('tmpFileName',$tmp_name);
-			arrStr=explode('.', $name);
-			$this->setOption('filetype',strlower($arrStr[count($arrStr)-1] ));
+			$arrStr=explode('.', $name);
+			$this->setOption('fileType',strtolower($arrStr[count($arrStr)-1] ));
 			$this->setOption('fileSize',$size);
 
 			return true;
@@ -87,11 +179,11 @@
 		
 		//用于获得上传后的文件名
 		function getNewFileName(){
-		
+			return $this->newFileName;
 		}
 		//s上传如果失败则调用此方法就可以查看错误报告
 		function getErrorMsg(){
-		
+			return $this->errorMess;
 		}
 		
 	}
