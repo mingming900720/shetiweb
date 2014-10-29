@@ -122,7 +122,45 @@
 			$size=$_FILES[$fileField]['size'];
 			$error=$_FILES[$fileField]['error'];
 			
-			
+			if(is_Array($name)){
+				$errors=array();
+				
+				for($i=0; $i<count($name); $i++){
+					if($this->setFiles($name[$i], $tmp_name[$i], $size[$i], $error[$i])){
+						if(!$this->checkFileSize() || !$this->checkFileType()){
+							$errors[]=$this->getError();
+							$return=false;
+						}
+					}else{
+						$error[]=$this->getError();
+						return false;
+					}
+					
+					if(!$return)
+						$this->setFiles();
+				}
+				
+				if($return){
+					$fileNames=array();
+					
+					for($i=0; $i<count($name); $i++){
+						if($this->setFiles($name[$i], $tmp_name[$i], $size[$i], $error[$i])){
+							$this->setNewFlieName();
+							if(!$this->copyFile()){
+								$errors=$this->getError();
+								$return=false;
+							}else{
+								$fileNames[]=$this->newFileName;
+							}
+						}
+					}
+					$this->newFileName=$fileNames;
+				}
+				
+				$this->errorMess=$errors;
+				return $return;
+				
+			}else{
 			
 				if($this->setFiles($name, $tmp_name, $size, $error)){
 					if($this->checkFileSize() && $this->checkFileType()){
@@ -131,7 +169,7 @@
 						if($this->copyFile()){
 							return true;
 						}else{
-							return false;
+							$return=false;
 						}						
 					}else{
 						$return=false;
@@ -142,6 +180,7 @@
 				if(!$return)
 					 $this->errorMess=$this->getError();
 				return $return;
+			}
 		}
 		
 		private function copyFile(){
