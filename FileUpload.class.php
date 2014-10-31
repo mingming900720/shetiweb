@@ -3,7 +3,7 @@
 	class FileUpload {
 		private $filepath;     //指定上传文件保存的路径
 		private $allowtype=array('gif', 'jpg', 'png', 'jpeg', 'mp3');  //充许上传文件的类型
-		private $maxsize=1000000000;  //允上传文件的最大长度 1M
+		private $maxsize=2000000000;  //允上传文件的最大长度 1M
 		private $israndname=true;  //是否随机重命名， true false不随机，使用原文件名
 		private $originName;   //源文件名称
 		private $tmpFileName;   //临时文件名
@@ -38,6 +38,7 @@
 		}
 		
 		private function getError(){
+
 			$str="上传文件<font color='red'>{$this->originName}</font>时出错：";
 
 			switch($this->errorNum){
@@ -122,19 +123,19 @@
 			$tmp_name=$_FILES[$fileField]['tmp_name'];
 			$size=$_FILES[$fileField]['size'];
 			$error=$_FILES[$fileField]['error'];
-			
 			if(is_Array($name)){
 				$errors=array();
-				
+
 				for($i=0; $i<count($name); $i++){
+										
 					if($this->setFiles($name[$i], $tmp_name[$i], $size[$i], $error[$i])){
 						if(!$this->checkFileSize() || !$this->checkFileType()){
 							$errors[]=$this->getError();
 							$return=false;
 						}
 					}else{
-						$error[]=$this->getError();
-						return false;
+						$errors[]=$this->getError();
+						$return=false;
 					}
 					
 					if(!$return)
@@ -145,6 +146,7 @@
 					$fileNames=array();
 					
 					for($i=0; $i<count($name); $i++){
+
 						if($this->setFiles($name[$i], $tmp_name[$i], $size[$i], $error[$i])){
 							$this->setNewFlieName();
 							if(!$this->copyFile()){
@@ -162,7 +164,7 @@
 				return $return;
 				
 			}else{
-			
+
 				if($this->setFiles($name, $tmp_name, $size, $error)){
 					if($this->checkFileSize() && $this->checkFileType()){
 						$this->setNewFlieName();
@@ -203,12 +205,11 @@
 		//设置和$_FILES有关的内容
 		private function setFiles($name="", $tmp_name='', $size=0, $error=0){
 			$this->setOption('errorNum',$error);
-			
+			$this->setOption('originName',$name);
 			if($error){
 				return false;
 			}
-			
-			$this->setOption('originName',$name);
+
 			$this->setOption('tmpFileName',$tmp_name);
 			$arrStr=explode('.', $name);
 			$this->setOption('fileType',strtolower($arrStr[count($arrStr)-1] ));
