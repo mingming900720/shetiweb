@@ -1,4 +1,4 @@
 #my ignore files
-/shangchuan
-/image
-.igtignore
+/shangchuan/
+/image/
+*.igtignore
