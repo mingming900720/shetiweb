@@ -1,14 +1,19 @@
+<?php
 
+	$dirname="shangchuan/photo";
 	
-	<html>
-	<body>
-	<a href="shangchuan/uploads/01.rmvb">01.rmvb</a><br>
-	<a href="shangchuan/uploads/02.rmvb">02.rmvb</a><br>
-	<a href="shangchuan/uploads/03.rmvb">03.rmvb</a><br>
-	<a href="shangchuan/uploads/04.rmvb">04.rmvb</a><br>
-	</body>
-	</html>
+	$dir=opendir($dirname);
+	echo "<html>";
 
+	echo "<body>";
+	while($fileName=readdir($dir)){
+		if($fileName!="." && $fileName!=".."){
+			echo "<a href=$dirname/$fileName>$fileName</a><br>";
+		}
+	}
+	echo "</body>";
+	echo "</html>";
+	closedir($dir);
 
 
 

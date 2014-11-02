@@ -1,14 +1,21 @@
 <?php
 	require "FileUpload.class.php";
+	
+	$defaultdir="/home/wwwroot/default/shangchuan";
 
-	$up=new FileUpload(array('isRandName'=>false,'allowType'=>array('txt', 'doc', 'mp3', 'jpg', 'gif', 'rmvb', '3gp'),'FilePath'=>'/home/wwwroot/default/shangchuan/uploads/', 'MAXSIZE'=>2000000000));
+	$filepath=$defaultdir."/".$_POST["filepath"];
+
+	$up=new FileUpload(array('isRandName'=>false,'allowType'=>array('txt', 'doc', 'mp3', 'jpg', 'gif', 'rmvb', '3gp'),'FilePath'=>$filepath, 'MAXSIZE'=>20000000000));
 
 	echo '<pre>';
 	if($up->uploadFile('spic')){
-		print_r($up->getNewFileName());
+		echo "上传以下文件到".$_POST["filepath"]."文件夹成功<br>";
+		foreach($up->getNewFileName() as $key=>$val){
+			echo $val."<br>";
+		}
 	}else{
 		print_r($up->getErrorMsg());	
 	}
 	
 	echo '</pre>';
-		
+

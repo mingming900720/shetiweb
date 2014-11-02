@@ -2,28 +2,31 @@
 
 	class FileBianli{
 		private $dirname;
-		
+		private $dirsize=0;
+		private $totalsize=0;
 		
 		
 		function bianliDir($dirname){
 
-		
-		echo $dirname."共计大小为：".toSize(dirsize($dirname))."<br>";
-		
-		$dir=opendir($dirname);
+			$dir=opendir($dirname);
 
-		while($fileName=readdir($dir)){
-			if($fileName!="." && $fileName!=".."){
-				$file=$dirname.'/'.$fileName;
-				if(is_dir($file)){
-					echo "<font color='red'>".$fileName."---".date("Y-m-d H:i:s")."---".filectime($file)."---".filetype($file)."---".toSize(dirsize($file))."---</font><br>";
-				}else{
-					echo "<font color='blue'>".$fileName."---".date("Y-m-d H:i:s")."---". filectime($file)."---".filetype($file)."---".toSize(filesize($file))."---</font><br>";
+			while($fileName=readdir($dir)){
+				if($fileName!="." && $fileName!=".."){
+					$file=$dirname.'/'.$fileName;
+					if(is_dir($file)){
+						echo "<font color='red'>".$fileName."---".date("Y-m-d H:i:s")."---".filetype($file)."---".$this->toSize($this->dirsize($file))."---</font><br>";
+						$totalsize+=$this->dirsize($file);
+					}else{
+						echo "<font color='blue'>".$fileName."---".date("Y-m-d H:i:s")."---".filetype($file)."---".$this->toSize(filesize($file))."---</font><br>";
+						$totalsize+=filesize($file);
+					}
 				}
 			}
+			closedir($dir);
+			echo $dirname."共计大小为：".$this->toSize($totalsize)."<br>";
+			return true;
 		}
-		closedir($dir);
-		}
+
 		
 		
 		function toSize($size){
@@ -45,7 +48,6 @@
 		}
 		
 		function dirsize($dirname){
-			$dirsize=0;
 			
 			$dir=opendir($dirname);
 			
@@ -53,7 +55,7 @@
 				 $file=$dirname."/".$filename;
 				 if($filename!="." && $filename!=".."){
 					if(is_dir($file)){
-						dirsize($file);//递归完成
+						$this->dirsize($file);//递归完成
 					}else{
 						$dirsize+=filesize($file);
 					}

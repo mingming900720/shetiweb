@@ -78,6 +78,7 @@ body {
 }
 
 #main #caidan {
+	float:left;
 	width:15%;
 	padding-left:7%;
 }

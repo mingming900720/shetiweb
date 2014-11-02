@@ -3,7 +3,7 @@
 	class FileUpload {
 		private $filepath;     //指定上传文件保存的路径
 		private $allowtype=array('gif', 'jpg', 'png', 'jpeg', 'mp3');  //充许上传文件的类型
-		private $maxsize=2000000000;  //允上传文件的最大长度 1M
+		private $maxsize=20000000000;  //允上传文件的最大长度 1M
 		private $israndname=false;  //是否随机重命名， true false不随机，使用原文件名
 		private $originName;   //源文件名称
 		private $tmpFileName;   //临时文件名
