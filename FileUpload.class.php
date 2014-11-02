@@ -4,7 +4,7 @@
 		private $filepath;     //指定上传文件保存的路径
 		private $allowtype=array('gif', 'jpg', 'png', 'jpeg', 'mp3');  //充许上传文件的类型
 		private $maxsize=2000000000;  //允上传文件的最大长度 1M
-		private $israndname=true;  //是否随机重命名， true false不随机，使用原文件名
+		private $israndname=false;  //是否随机重命名， true false不随机，使用原文件名
 		private $originName;   //源文件名称
 		private $tmpFileName;   //临时文件名
 		private $fileType;  //文件类型
@@ -66,6 +66,7 @@
 			}
 
 			if(!file_exists($this->filepath) || !is_writable($this->filepath)){
+				echo $this->filepath;
 				if(!@mkdir($this->filepath, 0755)){
 					$this->setOption('errorNum', -4);
 					return false;
@@ -90,7 +91,7 @@
 			if($this->israndname){
 				$this->setOption('newFileName',$this->proRandName());
 			}else{
-				$this->setOption('newFileName',$this->originName());
+				$this->setOption('newFileName',$this->originName);
 			}
 		}
 		
