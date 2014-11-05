@@ -23,23 +23,42 @@
 		}
 		
 		function bianliDir($dirname){
+			$dirnames=$this->getDirnames($dirname);
 
+			if($dirnames!=""){
+				foreach($dirnames as $key=>$val){
+
+					$vals=explode("/", $val);
+					$lastdir=$vals[count($vals)-1];
+					echo '<form action="listfile.php" method="post" enctype="multipart/form-data">';	
+					echo '<input type="hidden" name="dirname" value="'.$val.'"/>';	
+					echo '<input type="submit" name="sub" value="'.$lastdir.'"/><b>共计:</b> '.$this->toSize($this->dirsize($val)).'<br>';
+					echo '</form>';
+
+				}
+			}
+			
 			$dir=opendir($dirname);
 
 			while($fileName=readdir($dir)){
 				if($fileName!="." && $fileName!=".."){
 					$file=$dirname.'/'.$fileName;
 					if(is_dir($file)){
-						echo "<font color='red'>".$fileName."-".date("Y-m-d H:i:s")."-".filetype($file)."-".$this->toSize($this->dirsize($file))."-</font><br>";
 						$totalsize+=$this->dirsize($file);
 					}else{
-						echo "<a href='$file'><font color='blue'>".$fileName."-".date("Y-m-d H:i:s")."-".filetype($file)."-".$this->toSize(filesize($file))."-</font></a><br>";
+						echo "<a href='$file'><font color='blue'>".$fileName." <b></b>".filetype($file)."<b>：</b>".$this->toSize(filesize($file))."-</font></a><br>";
 						$totalsize+=filesize($file);
 					}
 				}
 			}
 			closedir($dir);
-			echo $dirname."共计大小为：".$this->toSize($totalsize)."<br>";
+			if($totalsize>0){
+				$vals=explode("/", $dirname);
+				$lastdir=$vals[count($vals)-1];
+				echo $lastdir."共计大小为：".$this->toSize($totalsize)."<br>";
+			}else{
+				echo "<b>Sorry,目前此分类还么有内容</b><br>";
+			}
 			return true;
 		}
 
@@ -64,20 +83,19 @@
 		}
 		
 		function dirsize($dirname){
-			
 			$dir=opendir($dirname);
 			
 			while($filename=readdir($dir)){
 				 $file=$dirname."/".$filename;
 				 if($filename!="." && $filename!=".."){
 					if(is_dir($file)){
-						$this->dirsize($file);//递归完成
+						$dirsize+=$this->dirsize($file)."<br>";//递归完成
 					}else{
 						$dirsize+=filesize($file);
 					}
 				 }
 			}
-			
+
 			closedir($dir);
 			return $dirsize;
 		}

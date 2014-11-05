@@ -4,7 +4,7 @@
 	
 	$check=new FileBianli;
 	$dirnames=array();
-	$dirname="shangchuan/meiju";
+	$dirname="shangchuan/dianshiju";
 	
 	$dirnames=$check->getDirnames($dirname);
 

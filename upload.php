@@ -5,7 +5,7 @@
 
 	$filepath=$defaultdir."/".$_POST["filepath"];
 
-	$up=new FileUpload(array('isRandName'=>false,'allowType'=>array('txt', 'doc', 'mp3', 'jpg', 'gif', 'rmvb', '3gp'),'FilePath'=>$filepath, 'MAXSIZE'=>20000000000));
+	$up=new FileUpload(array('isRandName'=>false,'allowType'=>array('txt', 'doc', 'mp3', 'jpg', 'gif', 'rmvb', '3gp', 'zip', 'exe'),'FilePath'=>$filepath, 'MAXSIZE'=>20000000000));
 
 	echo '<pre>';
 	if($up->uploadFile('spic')){
