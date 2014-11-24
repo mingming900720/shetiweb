@@ -30,6 +30,7 @@
 
 					$vals=explode("/", $val);
 					$lastdir=$vals[count($vals)-1];
+                    echo '<meta charset="utf-8">';
 					echo '<form action="listfile.php" method="post" enctype="multipart/form-data">';	
 					echo '<input type="hidden" name="dirname" value="'.$val.'"/>';	
 					echo '<input type="submit" name="sub" value="'.$lastdir.'"/><b>共计:</b> '.$this->toSize($this->dirsize($val)).'<br>';
@@ -46,6 +47,7 @@
 					if(is_dir($file)){
 						$totalsize+=$this->dirsize($file);
 					}else{
+                        echo '<meta charset="UTF-8">';
 						echo "<a href='$file'><font color='blue'>".$fileName." <b></b>".filetype($file)."<b>：</b>".$this->toSize(filesize($file))."-</font></a><br>";
 						$totalsize+=filesize($file);
 					}

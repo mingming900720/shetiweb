@@ -5,7 +5,9 @@
 
 	
 	$string="";
-	
+	echo $_SESSION["code"]."<br>";
+		echo $_POST["code"]."-----------------<br>";
+	echo $_POST["name"]."-------------<br>";
 	if(strtoupper($_POST["code"])==strtoupper($_SESSION["code"])){
 			//定义短变量
 		$name=$_POST["name"];	
